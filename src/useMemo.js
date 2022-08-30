@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import P from "prop-types";
-// import Posts from "./Components/posts";
+
 const Post = ({ post }) => {
   console.log("render componente filho");
   return (

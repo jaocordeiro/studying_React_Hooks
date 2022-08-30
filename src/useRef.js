@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useMemo } from "react";
-import P from "prop-types";
-// import Posts from "./Components/posts";
-const Post = ({ post }) => {
+import React, { useEffect, useState, useMemo, useRef } from "react";
+import P, { func } from "prop-types";
+
+const Post = ({ post, handleGetTitle }) => {
   console.log("render componente filho");
   return (
     <div key={post.id} className="post">
-      <h1>{post.title}</h1>
+      <h1 onClick={() => handleGetTitle(post.title)}>{post.title}</h1>
       <p>{post.body}</p>
     </div>
   );
@@ -17,11 +17,14 @@ Post.propTypes = {
     title: P.string,
     body: P.string,
   }),
+  handleGetTitle: func,
 };
 
 export default function Ref() {
   const [posts, setPosts] = useState([]);
   const [value, setValue] = useState("");
+  const input = useRef(null);
+  const contador = useRef(0);
   console.log("componente renderizou");
 
   useEffect(() => {
@@ -30,10 +33,24 @@ export default function Ref() {
       .then((res) => setPosts(res));
   }, []);
 
+  useEffect(() => {
+    input.current.focus();
+  }, [value]);
+
+  useEffect(() => {
+    contador.current++;
+  }, []);
+
+  const handleGetTitle = (value) => {
+    setValue(value);
+  };
+
   return (
     <div className="App">
+      <h4>Render: {contador.current}</h4>
       <p>
         <input
+          ref={input}
           type="search"
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -43,7 +60,9 @@ export default function Ref() {
       {useMemo(() => {
         return (
           posts.length > 0 &&
-          posts.map((post) => <Post key={post.id} post={post} />)
+          posts.map((post) => (
+            <Post key={post.id} post={post} handleGetTitle={handleGetTitle} />
+          ))
         );
       }, [posts])}
 
